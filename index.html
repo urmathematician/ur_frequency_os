@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Operating System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+  body {
+        margin: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        background: url('https://i.pinimg.com/736x/f2/bc/88/f2bc8848b997efa57207f6f02b3eeb1f.jpg') no-repeat center center/cover;
+    }
+
+    #desktop {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .icon {
+        width: 80px;
+        text-align: center;
+        cursor: pointer;
+        color: white;
+        margin: 10px;
+        display: inline-block;
+    }
+
+    .icon img {
+        width: 50px;
+        height: 50px;
+    }
+
+    #taskbar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 40px;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+        color: white;
+    }
+
+    .taskbar-item {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    .taskbar-item img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+    }
+
+    #start-menu {
+        position: absolute;
+        bottom: 40px;
+        left: 10px;
+        width: 200px;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        border-radius: 5px;
+        display: none;
+        flex-direction: column;
+    }
+
+    #start-menu .menu-item {
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #ccc;
+    }
+
+    #start-menu .menu-item:hover {
+        background-color: #f0f0f0;
+    }
+
+    #clock {
+        position: absolute;
+        right: 1cm; /* Moves the clock 3 cm from the right */
+        color: white;
+    }
+
+    .window {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        width: 400px;
+        height: 300px;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        border-radius: 8px;
+        z-index: 100;
+    }
+
+    .window .title-bar {
+        background-color: #0078D7;
+        color: white;
+        padding: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: move;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .window .title-bar span {
+        font-weight: bold;
+    }
+
+    .window .close, .window .minimize {
+        cursor: pointer;
+    }
+
+    .window .content {
+        padding: 10px;
+        flex: 1;
+    }
+
+    .window.minimized {
+        display: none;
+    }
+
+    .calculator {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .calculator .display {
+        width: 90%;
+        height: 40px;
+        margin-bottom: 10px;
+        font-size: 1.5em;
+        text-align: right;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .calculator .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 5px;
+    }
+    .game-window {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+    }
+
+    /* Previous CSS remains the same */
+    .game-window {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+    }
+
+    .game-window .title-bar {
+        background-color: #0078D7;
+        color: white;
+        padding: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: move;
+    }
+
+    .game-window .title-bar span {
+        font-weight: bold;
+    }
+
+    .game-window .close, .game-window .minimize {
+        cursor: pointer;
+    }
+
+    .game-window .content {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .game-window.minimized {
+        display: none;
+    }
+</style>
+<body>
+    <div id="desktop">
+        <!-- Desktop Icons -->
+        <div class="icon" onclick="openApp('nasa')">
+            <img src="https://i.pinimg.com/736x/af/c9/a7/afc9a726311262f3096937d5cd8bc089.jpg" alt="NASA Live">
+            <div>NASA Live</div>
+        </div>
+        <div class="icon" onclick="openApp('calculator')">
+            <img src="https://i.pinimg.com/736x/af/c9/a7/afc9a726311262f3096937d5cd8bc089.jpg" alt="Calculator">
+            <div>Calculator</div>
+        </div>
+        <div class="icon" onclick="openApp('terminal')">
+            <img src="https://i.pinimg.com/736x/af/c9/a7/afc9a726311262f3096937d5cd8bc089.jpg" alt="Terminal">
+            <div>Terminal</div>
+        </div>
+        <div class="icon" onclick="openApp('game')">
+            <img src="https://i.pinimg.com/736x/af/c9/a7/afc9a726311262f3096937d5cd8bc089.jpg" alt="Game">
+            <div>Legendary Sniper</div>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div id="taskbar">
+        <div class="taskbar-item" onclick="toggleStartMenu()">
+            <img src="https://img.hotimg.com/UR-Frequency-Old-Logo4557910cff2eff9e.png" alt="Start Icon" style="height:39px">
+        </div>
+        <div class="taskbar-item" id="clock"></div>
+    </div>
+
+    <!-- Start Menu -->
+    <div id="start-menu">
+        <div class="menu-item" onclick="openApp('nasa')">NASA Live</div>
+        <div class="menu-item" onclick="openApp('calculator')">Calculator</div>
+        <div class="menu-item" onclick="openApp('terminal')">Terminal</div>
+        <div class="menu-item" onclick="openApp('game')">Legendary Sniper</div>
+        <div class="menu-item" onclick="showSettings()">Settings</div>
+        <div class="menu-item" onclick="showAbout()">About</div>
+        <div class="menu-item" onclick="alert('Browser shutting down...');">Shut Down</div>
+    </div>
+
+    <!-- App Windows -->
+    <div id="windows-container"></div>
+
+    <script src="script.js"></script>
+</body>
+<script>
+    // Clock
+    const clockElement = document.getElementById('clock');
+    function updateClock() {
+        const now = new Date();
+        clockElement.textContent = now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Start Menu
+    const startMenu = document.getElementById('start-menu');
+    function toggleStartMenu() {
+        startMenu.style.display = startMenu.style.display === 'flex' ? 'none' : 'flex';
+    }
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#start-menu') && !e.target.closest('.taskbar-item')) {
+            startMenu.style.display = 'none';
+        }
+    });
+
+    // App Windows
+    const windowsContainer = document.getElementById('windows-container');
+    let windowCount = 0;
+
+    function openApp(app) {
+        const windowId = `window-${windowCount++}`;
+        const windowElement = document.createElement('div');
+        windowElement.id = windowId;
+
+        let content = '';
+        if (app === 'calculator') {
+            windowElement.className = 'window';
+            content = `
+                <div class="title-bar" onmousedown="startDrag(event, '${windowId}')">
+                    <span>Calculator</span>
+                    <span class="close" onclick="closeWindow('${windowId}')">X</span>
+                    <span class="minimize" onclick="minimizeWindow('${windowId}')">_</span>
+                </div>
+                <div class="content calculator">
+                    <input type="text" id="display-${windowId}" class="display" disabled>
+                    <div class="buttons">
+                        <button class="button" onclick="appendValue('${windowId}', '7')">7</button>
+                        <button class="button" onclick="appendValue('${windowId}', '8')">8</button>
+                        <button class="button" onclick="appendValue('${windowId}', '9')">9</button>
+                        <button class="button operation" onclick="appendValue('${windowId}', '/')">/</button>
+                        <button class="button" onclick="appendValue('${windowId}', '4')">4</button>
+                        <button class="button" onclick="appendValue('${windowId}', '5')">5</button>
+                        <button class="button" onclick="appendValue('${windowId}', '6')">6</button>
+                        <button class="button operation" onclick="appendValue('${windowId}', '*')">*</button>
+                        <button class="button" onclick="appendValue('${windowId}', '1')">1</button>
+                        <button class="button" onclick="appendValue('${windowId}', '2')">2</button>
+                        <button class="button" onclick="appendValue('${windowId}', '3')">3</button>
+                        <button class="button operation" onclick="appendValue('${windowId}', '-')">-</button>
+                        <button class="button" onclick="appendValue('${windowId}', '0')">0</button>
+                        <button class="button" onclick="appendValue('${windowId}', '.')">.</button>
+                        <button class="button operation" onclick="calculate('${windowId}')">=</button>
+                        <button class="button operation" onclick="appendValue('${windowId}', '+')">+</button>
+                        <button class="button" onclick="appendValue('${windowId}', 'Math.sin(')">sin</button>
+                        <button class="button" onclick="appendValue('${windowId}', 'Math.cos(')">cos</button>
+                        <button class="button" onclick="appendValue('${windowId}', 'Math.tan(')">tan</button>
+                        <button class="button operation" onclick="clearDisplay('${windowId}')">C</button>
+                    </div>
+                </div>
+            `;
+        } else if (app === 'nasa') {
+            windowElement.className = 'window';
+            content = `
+                <div class="title-bar" onmousedown="startDrag(event, '${windowId}')">
+                    <span>NASA Live</span>
+                    <span class="close" onclick="closeWindow('${windowId}')">X</span>
+                    <span class="minimize" onclick="minimizeWindow('${windowId}')">_</span>
+                </div>
+                <div class="content">
+                    <iframe src="https://www.nasa.gov/multimedia/nasatv/index.html" width="100%" height="100%"></iframe>
+                </div>
+            `;
+        } else if (app === 'terminal') {
+            windowElement.className = 'window';
+            content = `
+                <div class="title-bar" onmousedown="startDrag(event, '${windowId}')">
+                    <span>Terminal</span>
+                    <span class="close" onclick="closeWindow('${windowId}')">X</span>
+                    <span class="minimize" onclick="minimizeWindow('${windowId}')">_</span>
+                </div>
+                <div class="content">
+                    <pre id="terminal-content-${windowId}"></pre>
+                    <input type="text" id="terminal-input-${windowId}" onkeydown="handleTerminalInput(event, '${windowId}')">
+                </div>
+            `;
+        } else if (app === 'game') {
+            windowElement.className = 'game-window';
+            content = `
+                <div class="title-bar" onmousedown="startDrag(event, '${windowId}')">
+                    <span>Legendary Sniper</span>
+                    <span class="close" onclick="closeWindow('${windowId}')">X</span>
+                    <span class="minimize" onclick="minimizeWindow('${windowId}')">_</span>
+                </div>
+                <div class="content">
+                    <iframe src="https://www.onlinegames.io/games/2021/unity3/legendary-sniper/index.html" width="100%" height="100%" frameborder="0"></iframe>
+                </div>
+            `;
+        }
+
+        windowElement.innerHTML = content;
+        windowsContainer.appendChild(windowElement);
+        dragElement(windowElement);
+    }
+
+    function startDrag(e, windowId) {
+        // To make the window draggable
+        let offsetX = e.clientX;
+        let offsetY = e.clientY;
+
+        const windowElement = document.getElementById(windowId);
+
+        function dragMove(e) {
+            const dx = e.clientX - offsetX;
+            const dy = e.clientY - offsetY;
+            windowElement.style.left = windowElement.offsetLeft + dx + 'px';
+            windowElement.style.top = windowElement.offsetTop + dy + 'px';
+            offsetX = e.clientX;
+            offsetY = e.clientY;
+        }
+
+        function dragEnd() {
+            document.removeEventListener('mousemove', dragMove);
+            document.removeEventListener('mouseup', dragEnd);
+        }
+
+        document.addEventListener('mousemove', dragMove);
+        document.addEventListener('mouseup', dragEnd);
+    }
+
+    function closeWindow(windowId) {
+        const windowElement = document.getElementById(windowId);
+        windowElement.remove();
+    }
+
+    function minimizeWindow(windowId) {
+        const windowElement = document.getElementById(windowId);
+        windowElement.classList.toggle('minimized');
+    }
+
+    function appendValue(windowId, value) {
+        const display = document.getElementById(`display-${windowId}`);
+        display.value += value;
+    }
+
+    function clearDisplay(windowId) {
+        const display = document.getElementById(`display-${windowId}`);
+        display.value = '';
+    }
+
+    function calculate(windowId) {
+        const display = document.getElementById(`display-${windowId}`);
+        display.value = eval(display.value);
+    }
+
+    function handleTerminalInput(event, windowId) {
+        if (event.key === 'Enter') {
+            const terminalInput = document.getElementById(`terminal-input-${windowId}`).value;
+            const terminalContent = document.getElementById(`terminal-content-${windowId}`);
+            terminalContent.innerHTML += `\n$ ${terminalInput}`;
+            document.getElementById(`terminal-input-${windowId}`).value = '';
+        }
+    }
+</script>
+</html>
